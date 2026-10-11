@@ -1,0 +1,28 @@
+# Rust
+/engine/target/
+**/target/
+Cargo.lock.orig
+
+# Android / Gradle
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/local.properties
+/android/app/src/main/jniLibs/
+.cxx/
+*.apk
+*.aab
+*.keystore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AdNox runtime data
+/adnox-lists/
+*.log

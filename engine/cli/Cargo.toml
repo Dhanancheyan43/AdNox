@@ -1,0 +1,15 @@
+[package]
+name = "adnox-cli"
+version = "0.1.0"
+edition = "2021"
+description = "AdNox command-line tool: manage filter lists and run the DNS blocker"
+
+[[bin]]
+name = "adnox"
+path = "src/main.rs"
+
+[dependencies]
+adnox-core = { path = "../core" }
+adnox-dns = { path = "../dns" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "time"] }
+ureq = "2"

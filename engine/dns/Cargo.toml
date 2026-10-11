@@ -1,0 +1,14 @@
+[package]
+name = "adnox-dns"
+version = "0.1.0"
+edition = "2021"
+description = "AdNox local DNS filtering server (sinkholes ad/tracker domains)"
+
+[lib]
+name = "adnox_dns"
+path = "src/lib.rs"
+
+[dependencies]
+adnox-core = { path = "../core" }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "macros", "sync", "time"] }
+hickory-proto = "0.24"

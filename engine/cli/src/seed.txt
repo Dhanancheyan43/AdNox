@@ -1,0 +1,60 @@
+# AdNox seed blocklist (bundled, works offline).
+# A small, high-signal set of ad/tracker domains so AdNox blocks something out of the box
+# before the full lists (EasyList, StevenBlack, AdGuard DNS, Peter Lowe) are downloaded via
+# `adnox update`. Hosts syntax: "0.0.0.0 <domain>". Subdomains are matched automatically.
+#
+# Advertising
+0.0.0.0 doubleclick.net
+0.0.0.0 googlesyndication.com
+0.0.0.0 googleadservices.com
+0.0.0.0 google-analytics.com
+0.0.0.0 adservice.google.com
+0.0.0.0 pagead2.googlesyndication.com
+0.0.0.0 ads.yahoo.com
+0.0.0.0 adserver.yahoo.com
+0.0.0.0 advertising.com
+0.0.0.0 adnxs.com
+0.0.0.0 rubiconproject.com
+0.0.0.0 pubmatic.com
+0.0.0.0 openx.net
+0.0.0.0 criteo.com
+0.0.0.0 criteo.net
+0.0.0.0 taboola.com
+0.0.0.0 outbrain.com
+0.0.0.0 moatads.com
+0.0.0.0 adcolony.com
+0.0.0.0 applovin.com
+0.0.0.0 unityads.unity3d.com
+0.0.0.0 ads.mopub.com
+0.0.0.0 inmobi.com
+0.0.0.0 smartadserver.com
+0.0.0.0 casalemedia.com
+0.0.0.0 bidswitch.net
+0.0.0.0 3lift.com
+0.0.0.0 sharethrough.com
+# Tracking / analytics
+0.0.0.0 scorecardresearch.com
+0.0.0.0 quantserve.com
+0.0.0.0 mixpanel.com
+0.0.0.0 segment.io
+0.0.0.0 segment.com
+0.0.0.0 amplitude.com
+0.0.0.0 hotjar.com
+0.0.0.0 fullstory.com
+0.0.0.0 mouseflow.com
+0.0.0.0 crazyegg.com
+0.0.0.0 bugsnag.com
+0.0.0.0 branch.io
+0.0.0.0 adjust.com
+0.0.0.0 app-measurement.com
+0.0.0.0 graph.facebook.com
+0.0.0.0 connect.facebook.net
+0.0.0.0 analytics.tiktok.com
+0.0.0.0 ads.tiktok.com
+0.0.0.0 ads.linkedin.com
+0.0.0.0 ads.pinterest.com
+0.0.0.0 ads.twitter.com
+0.0.0.0 analytics.twitter.com
+0.0.0.0 bat.bing.com
+0.0.0.0 clarity.ms
+0.0.0.0 stats.g.doubleclick.net

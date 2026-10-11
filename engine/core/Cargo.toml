@@ -1,0 +1,9 @@
+[package]
+name = "adnox-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+adblock = "0.9"
+# Pin: rmp-serde 0.15 (pulled in by adblock) is incompatible with rmp >= 0.8.12
+rmp = "=0.8.11"
