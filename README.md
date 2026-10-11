@@ -52,32 +52,116 @@ connection is never made. Legitimate domains are forwarded to your upstream reso
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Design and data flow in detail. |
 | [`ROADMAP.md`](ROADMAP.md) | Phased plan, including cosmetic filtering and packaging. |
 
-## Try it in 60 seconds (any desktop OS)
+## How to test it
 
-The engine and DNS blocker build and run on Linux/macOS/Windows today:
+Three ways, from fastest to most complete. **All of them start with the one-time setup below.**
+
+### Step 0 — One-time setup (any OS)
+
+1. **Install Rust** from <https://rustup.rs> (on Windows, download and run `rustup-init.exe`).
+2. **Get the code and build** the `adnox` tool:
+
+   ```bash
+   git clone https://github.com/Dhanancheyan43/AdNox.git
+   cd AdNox/engine
+   cargo build --release -p adnox-cli
+   ```
+
+   The binary is now at `AdNox/engine/target/release/adnox` (`adnox.exe` on Windows).
+   Run the commands below from the `AdNox/engine` directory.
+
+> No Rust and don't want to install it? See **[Prebuilt binaries](#prebuilt-binaries)** below.
+
+### Test 1 — Quick sanity check (~60 seconds)
+
+Confirm it blocks the right things using the bundled offline list:
 
 ```bash
-cd engine
-cargo build --release -p adnox-cli
-
-# Does a domain get blocked? (uses the bundled seed list — no download needed)
-./target/release/adnox test doubleclick.net      # -> BLOCKED
-./target/release/adnox test example.com          # -> allowed
-
-# Download the full lists and run the blocker on a test port
-./target/release/adnox update
-./target/release/adnox run --bind 127.0.0.1:5353 --upstream 1.1.1.1:53
-# in another terminal:
-dig @127.0.0.1 -p 5353 doubleclick.net   +short   # -> 0.0.0.0
-dig @127.0.0.1 -p 5353 wikipedia.org     +short   # -> real address
+./target/release/adnox test doubleclick.net        # -> BLOCKED
+./target/release/adnox test ads.g.doubleclick.net  # -> BLOCKED
+./target/release/adnox test wikipedia.org          # -> allowed
 ```
 
-## Building the apps
+Then download the full lists, run the blocker on a **test port** (5353, no admin rights needed),
+and query it with real DNS:
 
-- **Android:** build `libadnox.so` with `cargo ndk`, then the APK with Gradle — full steps in
-  [android/README.md](android/README.md).
-- **Windows:** `cargo build --release -p adnox-cli`, then run `windows/install.ps1` as
-  Administrator — full steps in [windows/README.md](windows/README.md).
+```bash
+./target/release/adnox update
+./target/release/adnox run --bind 127.0.0.1:5353 --upstream 1.1.1.1:53
+```
+
+In a second terminal:
+
+```bash
+# Linux / macOS:
+dig @127.0.0.1 -p 5353 doubleclick.net +short   # -> 0.0.0.0   (blocked)
+dig @127.0.0.1 -p 5353 wikipedia.org   +short   # -> a real IP (allowed)
+
+# Windows PowerShell (nslookup speaks to a custom port like this):
+nslookup -port=5353 doubleclick.net 127.0.0.1   # -> 0.0.0.0
+nslookup -port=5353 wikipedia.org   127.0.0.1   # -> a real address
+```
+
+The running server also prints a live `[stats] queries=… blocked=… forwarded=…` line every 30s.
+Press **Ctrl-C** to stop.
+
+### Test 2 — Actually block ads on your whole computer
+
+This points your system's DNS at AdNox, so every app and browser is filtered.
+
+**Windows** — open PowerShell **as Administrator**:
+
+```powershell
+cd AdNox\windows
+.\install.ps1
+# verify:
+Resolve-DnsName doubleclick.net   # -> 0.0.0.0 (blocked)
+Resolve-DnsName example.com       # -> resolves normally
+```
+
+Browse some ad-heavy sites to see the difference. To remove it and restore normal DNS:
+
+```powershell
+.\uninstall.ps1
+```
+
+**Linux / macOS** — run on the real DNS port (needs `sudo`) and point your resolver at it:
+
+```bash
+sudo ./target/release/adnox run --bind 127.0.0.1:53 --upstream 1.1.1.1:53
+```
+
+Then set your network's DNS server to `127.0.0.1`:
+- **macOS:** System Settings → Network → (your connection) → Details → DNS → add `127.0.0.1`.
+- **Linux:** set `nameserver 127.0.0.1` in your resolver config (e.g. via NetworkManager or
+  `/etc/resolv.conf`).
+
+Undo by removing `127.0.0.1` / switching DNS back to automatic and stopping the server (Ctrl-C).
+
+### Test 3 — The Android app
+
+Building the APK needs a machine with the Android toolchain (NDK + Gradle). Full copy-paste steps
+are in **[android/README.md](android/README.md)**: install `cargo-ndk` and the NDK, build
+`libadnox.so`, then `./gradlew assembleDebug`, `adb install` the APK, open AdNox and tap
+**Turn on** (accept the one-time VPN consent prompt). Google Play disallows VPN-based blockers, so
+AdNox installs as a direct APK / via F-Droid.
+
+### Prebuilt binaries
+
+Don't want to install Rust? The GitHub Actions CI can attach a ready-to-run `adnox` binary to each
+build so you can download and run it directly — this is a planned addition (see
+[ROADMAP.md](ROADMAP.md)); open an issue if you'd like it prioritized.
+
+### Troubleshooting
+
+- **`cargo: command not found`** — restart your terminal after installing Rust, or run
+  `source "$HOME/.cargo/env"` (Linux/macOS) so `cargo` is on your `PATH`.
+- **"permission denied" / can't bind port 53** — port 53 needs admin/root. Use `--bind
+  127.0.0.1:5353` for a quick test (Test 1), or run with `sudo` / as Administrator (Test 2).
+- **Nothing seems blocked in Test 2** — flush the DNS cache (`ipconfig /flushdns` on Windows,
+  `sudo dscacheutil -flushcache` on macOS) and confirm your adapter's DNS is `127.0.0.1`.
+- **Some ads still show** — v1 is DNS-level, so ads served from first-party domains aren't caught
+  yet; cosmetic filtering is on the [roadmap](ROADMAP.md).
 
 ## Status
 
